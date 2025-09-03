@@ -41,7 +41,7 @@ function imprimir(texto) {
 
 async function verificarPedidos() {
   try {
-    const res = await axios.get('https://acai-server-0sc0.onrender.com/pedidos');
+    const res = await axios.get('https://acai-server-1.onrender.com/pedidos');
     const pedidos = res.data;
 
     const novosPedidos = pedidos.filter(p => {
@@ -64,6 +64,22 @@ async function verificarPedidos() {
     pedidosAntigos = pedidos;
   } catch (err) {
     console.error('❌ Erro ao buscar pedidos:', err.message);
+  }
+}
+async function verificarPedidos() {
+  try {
+    const res = await axios.get('https://acai-server-1.onrender.com/pedidos');
+    const pedidos = res.data;
+
+    const novosPedidos = pedidos.filter(p => !pedidosAntigos.some(a => a.horario === p.horario));
+    novosPedidos.forEach(pedido => {
+      const texto = gerarNotinha(pedido);
+      imprimir(texto);
+    });
+
+    pedidosAntigos = pedidos;
+  } catch (err) {
+    console.error(`❌ Erro ao buscar pedidos (${err.response?.status || 'sem resposta'}):`, err.message);
   }
 }
 
